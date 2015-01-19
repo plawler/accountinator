@@ -20,7 +20,7 @@ class ApplicationSpec extends Specification {
     }
 
     "render the index page" in new WithApplication{
-      val home = route(FakeRequest(GET, "/")).get
+      val home = route(FakeRequest(GET, "/chorely/api")).get
 
       status(home) must equalTo(OK)
       contentType(home) must beSome.which(_ == "text/html")
