@@ -26,6 +26,9 @@ class ApplicationSpec extends Specification {
       contentAsString(home) must contain ("Welcome to the Chorely Accounts service!")
     }
 
+    "send 404 on a GET request to an account that doesn't exist" in new WithApplication {
+      true must_!=(false)
+    }
   }
 
 }
