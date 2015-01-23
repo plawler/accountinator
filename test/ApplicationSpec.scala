@@ -27,7 +27,7 @@ class ApplicationSpec extends Specification {
     }
 
     "send 404 on a GET request to an account that doesn't exist" in new WithApplication {
-      true must_!=(false)
+      true must_!= false
     }
   }
 
