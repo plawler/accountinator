@@ -32,12 +32,15 @@ trait AccountService {
 
 object StormpathAccountService extends AccountService {
 
-  val stormpathApiKeyFile = Play.application.configuration.getString("stormpath.apiKey.properties")
+//  val stormpathApiKeyFile = Play.application.configuration.getString("stormpath.apiKey.properties")
+  val stormpathApiKeyId = Play.application.configuration.getString("stormpath.apiKey.id")
+  val stormpathApiKeySecret = Play.application.configuration.getString("stormpath.apiKey.secret")
   val stormpathContextPath = Play.application.configuration.getString("stormpath.context")
 
   lazy val client: Client = {
-    val path = System.getProperty("user.home") + stormpathApiKeyFile
-    val apiKey = ApiKeys.builder().setFileLocation(path).build()
+//    val path = System.getProperty("user.home") + stormpathApiKeyFile
+//    val apiKey = ApiKeys.builder().setFileLocation(path).build()
+    val apiKey = ApiKeys.builder().setId(stormpathApiKeyId).setSecret(stormpathApiKeySecret).build()
 
     Clients.builder()
       .setApiKey(apiKey)

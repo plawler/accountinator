@@ -1,8 +1,5 @@
 package controllers
 
-import java.util.UUID
-
-import com.fasterxml.uuid.Generators
 import play.api.Logger
 import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
