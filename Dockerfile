@@ -31,6 +31,11 @@ ADD         build.sbt /root/
 ADD         project/plugins.sbt /root/project/
 ADD         project/build.properties /root/project/
 
+# ENVIRONMENT VARIABLES FOR THE PROJECT
+ENV         STORMPATH_API_SECRET ${STORMPATH_API_SECRET}
+ENV         STORMPATH_API_ID ${STORMPATH_API_ID}
+
+
 # TEST AND BUILD THE PROJECT -- FAILURE WILL HALT IMAGE CREATION
 RUN         cd /root; /usr/local/activator/activator test stage
 RUN         rm /root/target/universal/stage/bin/*.bat
