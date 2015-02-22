@@ -1,40 +1,44 @@
 package controllers
 
-import play.api.Logger
+import models._
 import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
-import services.{StormpathAccountService, AccountService, ChorelyAccount}
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import services._
 
 object Application extends Controller {
 
-  implicit val fmtAccount = Json.format[ChorelyAccount]
-
-  val service: AccountService = StormpathAccountService
+  val service: AccountService2 = MongoAccountService
 
   def index = Action {
     Ok(views.html.index("Welcome to the Chorely Accounts service!"))
   }
 
-  def create = Action(parse.json) { request =>
+  def create = Action.async(parse.json) { implicit request =>
     request.body.validate[ChorelyAccount].map { account =>
-      val newAccount = ChorelyAccount(None, account.firstName, account.lastName, account.email)
-      service.createAccount(newAccount) match {
-        case ca: ChorelyAccount => Ok(Json.toJson(ca))
+      service.createAccount(account).map { ca =>
+        Created(Json.toJson(ca))
       }
-    }.recoverTotal(e => BadRequest("Error: " + JsError.toFlatJson(e)))
+    }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def get(email: String) = Action {
-    service.findAccount(email) match {
-      case Some(account) => Ok(Json.toJson(account))
-      case None => BadRequest(s"No account found for email: $email")
+  def get(username: String) = Action.async {
+    service.findAccount(username).map {
+      case Some(a) => Ok(Json.toJson(a))
+      case _ => BadRequest(s"No account found for username: $username")
     }
   }
 
-  def delete(email: String) = Action {
-    Logger.debug("Implement account removal")
-    service.deleteAccount(email)
-    Ok
+  def update = Action.async(parse.json) { implicit request =>
+    request.body.validate[ChorelyAccount].map { account =>
+      service.updateAccount(account).map { result =>
+        if (result) Ok("Account updated successfully") else Ok("No accounts were updated")
+      } recover {
+        case e: RuntimeException => BadRequest(e.getMessage)
+      }
+    }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
 }

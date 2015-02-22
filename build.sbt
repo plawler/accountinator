@@ -16,5 +16,6 @@ libraryDependencies ++= Seq(
   "com.stormpath.sdk" % "stormpath-sdk-httpclient" % "1.0.RC2.1",
   "com.stormpath.sdk" % "stormpath-sdk-oauth" % "1.0.RC2.1",
   "javax.servlet" % "javax.servlet-api" % "3.1.0",
-  "org.mockito" % "mockito-all" % "1.9.5"
+  "org.mockito" % "mockito-all" % "1.9.5",
+  "org.reactivemongo" %% "play2-reactivemongo" % "0.10.5.0.akka23"
 )
