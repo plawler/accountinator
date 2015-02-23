@@ -1,6 +1,7 @@
 package controllers
 
 import models._
+import play.api.Logger
 import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
 import scala.concurrent.Future
@@ -24,10 +25,21 @@ object Application extends Controller {
     }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def get(username: String) = Action.async {
+  def getByUsername(username: String) = Action.async {
     service.findAccount(username).map {
       case Some(a) => Ok(Json.toJson(a))
-      case _ => BadRequest(s"No account found for username: $username")
+      case _ =>
+        Logger.info("No account found")
+        BadRequest(Json.obj("message" -> s"No account found for username: $username"))
+    }
+  }
+
+  def getByEmailAndProvider(email: String, provider: String) = Action.async {
+    service.findAccount(email, provider).map {
+      case Some(a) => Ok(Json.toJson(a))
+      case _ =>
+        Logger.info("No account found")
+        BadRequest(Json.obj("message" -> s"No account found for email: $email and provider: $provider"))
     }
   }
 

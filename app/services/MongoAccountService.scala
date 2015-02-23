@@ -6,11 +6,7 @@ import play.api.Play.current
 import play.api.libs.json.Json
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import play.modules.reactivemongo.json.collection.JSONCollection
-import play.modules.reactivemongo.json.BSONFormats._
-import reactivemongo.core.commands.LastError
-
-// fixes "no json serializer found for type reactivemongo.bson.bsondocument"
-import reactivemongo.api._
+import play.modules.reactivemongo.json.BSONFormats._ // fixes "no json serializer found for type reactivemongo.bson.bsondocument"
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,6 +30,10 @@ object MongoAccountService extends AccountService2 {
 
   override def findAccount(username: String)(implicit ec: ExecutionContext): Future[Option[ChorelyAccount]] = {
     collection.find(Json.obj("username" -> username)).one[ChorelyAccount]
+  }
+
+  override def findAccount(email: String, provider: String)(implicit ec: ExecutionContext): Future[Option[ChorelyAccount]] = {
+    collection.find(Json.obj("email" -> email, "provider" -> provider)).one[ChorelyAccount]
   }
 
   // may want to just implement a saveAccount method for both POST and PUT

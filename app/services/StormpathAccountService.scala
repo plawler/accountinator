@@ -53,13 +53,13 @@ object StormpathAccountService extends AccountService {
     spAccount.setGivenName(account.firstName)
     spAccount.setSurname(account.lastName)
     spAccount.setEmail(account.email)
-    spAccount.setPassword(account.password)
+    spAccount.setPassword(account.passwordInfo.get.password)
 
     val customData = spAccount.getCustomData
     val accountId = Generators.timeBasedGenerator().generate()
     customData.put("authentication", account.authentication)
     customData.put("provider", account.provider)
-    customData.put("password", account.password) // ss requires the password and stormpath has no getter
+    customData.put("password", account.passwordInfo.get.password) // ss requires the password and stormpath has no getter
     customData.put("id", accountId)
 
     application.createAccount(spAccount)
@@ -79,8 +79,8 @@ object StormpathAccountService extends AccountService {
         account.getEmail,
         account.getCustomData.get("authentication").toString,
         account.getCustomData.get("provider").toString,
-        account.getCustomData.get("password").toString,
-        Some(UUID.fromString(account.getCustomData.get("id").toString))
+        None, //account.getCustomData.get("password").toString,
+        None //Some(UUID.fromString(account.getCustomData.get("id").toString))
       )
     }
   }

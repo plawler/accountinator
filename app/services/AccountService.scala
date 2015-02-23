@@ -1,7 +1,6 @@
 package services
 
 import models._
-import reactivemongo.core.commands.LastError
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -10,7 +9,8 @@ import scala.concurrent.{ExecutionContext, Future}
  */
 trait AccountService2 {
   def createAccount(account: ChorelyAccount)(implicit ec: ExecutionContext): Future[ChorelyAccount]
-  def findAccount(email: String)(implicit ec: ExecutionContext): Future[Option[ChorelyAccount]]
+  def findAccount(username: String)(implicit ec: ExecutionContext): Future[Option[ChorelyAccount]]
+  def findAccount(email: String, provider: String)(implicit ec: ExecutionContext): Future[Option[ChorelyAccount]]
   def updateAccount(account: ChorelyAccount)(implicit ec: ExecutionContext): Future[Boolean]
 }
 
