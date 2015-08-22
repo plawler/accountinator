@@ -9,6 +9,7 @@ scalaVersion := "2.11.6"
 libraryDependencies ++= Seq(
   cache,
   ws,
+  specs2 % Test,
   "com.fasterxml.uuid" % "java-uuid-generator" % "3.1.3",
   "com.stormpath.sdk" % "stormpath-sdk-api" % "1.0.RC4.5",
   "com.stormpath.sdk" % "stormpath-sdk-httpclient" % "1.0.RC4.5",

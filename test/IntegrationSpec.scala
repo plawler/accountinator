@@ -18,7 +18,7 @@ class IntegrationSpec extends Specification {
 
       browser.goTo("http://localhost:" + port + "/chorely/api")
 
-      browser.pageSource must contain("Welcome to the Chorely Accounts service!")
+      browser.pageSource must contain("Your application is ready")
     }
   }
 }

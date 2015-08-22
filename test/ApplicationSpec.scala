@@ -22,8 +22,8 @@ class ApplicationSpec extends Specification {
     "render the index page" in new WithApplication{
       val home = route(FakeRequest(GET, "/chorely/api")).get
       status(home) must equalTo(OK)
-      contentType(home) must beSome.which(_ == "text/html")
-      contentAsString(home) must contain ("Welcome to the Chorely Accounts service!")
+      contentType(home) must beSome.which(_ == "text/plain")
+      contentAsString(home) must contain ("Your application is ready")
     }
 
     "send 404 on a GET request to an account that doesn't exist" in new WithApplication {

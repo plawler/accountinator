@@ -13,7 +13,7 @@ import services._
 class Application @Inject() (service: AccountService) extends Controller {
 
   def index = Action {
-    Ok(views.html.index("Welcome to the Chorely Accounts service!"))
+    Ok("Your application is ready")
   }
 
   def create = Action.async(parse.json) { implicit request =>
@@ -21,7 +21,7 @@ class Application @Inject() (service: AccountService) extends Controller {
       service.createAccount(account).map { ca =>
         Created(Json.toJson(ca))
       }
-    }.getOrElse(Future.successful(BadRequest("invalid json")))
+    }.getOrElse(Future.successful(BadRequest(Json.obj("message" -> "invalid json"))))
   }
 
   def getByUsername(username: String) = Action.async {
@@ -49,7 +49,7 @@ class Application @Inject() (service: AccountService) extends Controller {
       } recover {
         case e: RuntimeException => BadRequest(e.getMessage)
       }
-    }.getOrElse(Future.successful(BadRequest("invalid json")))
+    }.getOrElse(Future.successful(BadRequest(Json.obj("message" -> "invalid json"))))
   }
 
 }
