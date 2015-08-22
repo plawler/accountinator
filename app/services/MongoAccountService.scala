@@ -3,7 +3,7 @@ package services
 import models._
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
 import play.api.Play
 import play.api.libs.json.Json
@@ -12,18 +12,7 @@ import play.modules.reactivemongo.json.collection._
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import com.fasterxml.uuid.Generators
-import reactivemongo.api.{DB, MongoConnection, MongoDriver}
 import reactivemongo.bson.BSONDocument
-
-/**
-  * Created by paullawler on 2/22/15.
- *
- */
-//trait ReactiveMongoApi {
-//  def driver: MongoDriver
-//  def connection: MongoConnection
-//  def db: DB
-//}
 
 class MongoAccountService extends AccountService {
 
