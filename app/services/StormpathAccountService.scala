@@ -15,6 +15,7 @@ import play.Play
 import play.api.Logger
 
 import scala.collection.JavaConversions._
+import scala.concurrent.Future
 
 
 /**
@@ -45,7 +46,7 @@ object StormpathAccountService extends AccountService {
 
   lazy val application = client.getResource(stormpathContextPath, classOf[Application])
 
-  override def createAccount(account: ChorelyAccount): ChorelyAccount = {
+  override def createAccount(account: ChorelyAccount): Future[ChorelyAccount] = {
     Logger.debug("Creating the account")
 
     val spAccount = client.instantiate(classOf[Account])
@@ -63,15 +64,15 @@ object StormpathAccountService extends AccountService {
     customData.put("id", accountId)
 
     application.createAccount(spAccount)
-    account.copy(_id = Some(accountId))
+    Future.successful(account.copy(_id = Some(accountId)))
   }
 
-  override def findAccount(email: String): Option[ChorelyAccount] = {
+  override def findAccount(email: String): Future[Option[ChorelyAccount]] = {
     Logger.debug("Finding the account")
     val queryParams = new util.HashMap[String, Object]() // http://alvinalexander.com/scala/how-to-convert-maps-scala-java
     queryParams.put("email", email)
 
-    application.getAccounts(queryParams).headOption.map { account =>
+    val account = application.getAccounts(queryParams).headOption.map { account =>
       ChorelyAccount(
         account.getUsername,
         account.getGivenName,
@@ -83,9 +84,14 @@ object StormpathAccountService extends AccountService {
         None //Some(UUID.fromString(account.getCustomData.get("id").toString))
       )
     }
+    Future.successful(account)
   }
 
-  override def deleteAccount(username: String): Unit = {
+  override def findAccount(email: String, provider: String): Future[Option[ChorelyAccount]] = ???
+
+  override def updateAccount(account: ChorelyAccount): Future[Boolean] = ???
+
+  def deleteAccount(username: String): Unit = {
     val queryParams = new util.HashMap[String, Object]()
     queryParams.put("username", username)
     try {

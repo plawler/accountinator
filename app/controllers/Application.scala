@@ -1,5 +1,6 @@
 package controllers
 
+import com.google.inject.Inject
 import models._
 import play.api.Logger
 import play.api.libs.json.{JsError, Json}
@@ -9,9 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import services._
 
-object Application extends Controller {
-
-  val service: AccountService2 = MongoAccountService
+class Application @Inject() (service: AccountService) extends Controller {
 
   def index = Action {
     Ok(views.html.index("Welcome to the Chorely Accounts service!"))
