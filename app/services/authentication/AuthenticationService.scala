@@ -17,6 +17,7 @@ import play.api.Play.current
 
 import scala.collection.JavaConversions._
 import scala.concurrent.Future
+import scala.util.Try
 
 /**
  * Created by paullawler on 8/22/15.
@@ -26,7 +27,7 @@ case class Token(accessToken: String, tokenType: String, expiresIn: Int)
 @ImplementedBy(classOf[StormpathAuthenticationService])
 trait AuthenticationService {
 
-  def retrieveToken[A](request: Request[A]): Future[Token]
+  def retrieveToken[A](request: Request[A]): Try[Future[Token]]
 
 }
 
@@ -62,11 +63,12 @@ class StormpathAuthenticationService extends AuthenticationService {
    * 3. OauthAuthenticationResult – Authorization header is present, with the Bearer method and the OAuth 2.0 Access Token retrieved from the Stormpath SDK in a previous request.
    */
 
-  def retrieveToken[A](request: Request[A]): Future[Token] = {
-    val result = application.authenticateApiRequest(toStormPathRequest(request))
-    val tokenResult = result.asInstanceOf[AccessTokenResult]
-    val token = tokenResult.getTokenResponse
-    Future.successful(Token(token.getAccessToken, token.getTokenType, token.getExpiresIn.toInt))
+  def retrieveToken[A](request: Request[A]): Try[Future[Token]] = {
+    Try {
+      val result: AccessTokenResult = application.authenticateApiRequest(toStormPathRequest(request)).asInstanceOf[AccessTokenResult]
+      val token = result.getTokenResponse
+      Future.successful(Token(token.getAccessToken, token.getTokenType, token.getExpiresIn.toInt))
+    }
   }
 
   private def toStormPathRequest[A](request: Request[A]): HttpRequest = {
