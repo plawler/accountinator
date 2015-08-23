@@ -6,7 +6,7 @@ import play.api.Logger
 import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
 import services._
 

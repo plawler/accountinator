@@ -5,6 +5,9 @@
 # Home page
 GET         /                                    @controllers.Application.index
 
+# OAuth
+POST        /v1/oauth/token                      @controllers.Authentication.token
+
 # Accounts
 POST        /v1/accounts                         @controllers.Application.create
 PUT         /v1/accounts                         @controllers.Application.update
