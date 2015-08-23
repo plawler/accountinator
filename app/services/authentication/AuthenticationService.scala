@@ -26,7 +26,7 @@ case class Token(accessToken: String, tokenType: String, expiresIn: Int)
 @ImplementedBy(classOf[StormpathAuthenticationService])
 trait AuthenticationService {
 
-  def retrieveToken(request: Request[AnyContent]): Future[Token]
+  def retrieveToken[A](request: Request[A]): Future[Token]
 
 }
 
@@ -54,14 +54,22 @@ class StormpathAuthenticationService extends AuthenticationService {
 
   lazy val application = client.getResource(applicationContextPath, classOf[Application])
 
-  def retrieveToken(request: Request[AnyContent]): Future[Token] = {
+  /**
+   * In Java, when asking the Application to authenticate an API authentication request, the return type of a successful authentication request will vary based on the request headers. This includes:
+   *
+   * 1. ApiAuthenticationResult – Authorization header is present, with the Basic method and the base64 encoded API_KEY_ID:API_KEY_SECRET.
+   * 2. AccessTokenResult – HTTP Method is POST. Authorization header is present, with the Basic method and the base64 encoded API_KEY_ID:API_KEY_SECRET. As part of the query or body of the request, the ‘grant_type’ is specified as ‘client_credentials’. Content-type is set to x-www-form-urlencoded.
+   * 3. OauthAuthenticationResult – Authorization header is present, with the Bearer method and the OAuth 2.0 Access Token retrieved from the Stormpath SDK in a previous request.
+   */
+
+  def retrieveToken[A](request: Request[A]): Future[Token] = {
     val result = application.authenticateApiRequest(toStormPathRequest(request))
     val tokenResult = result.asInstanceOf[AccessTokenResult]
     val token = tokenResult.getTokenResponse
     Future.successful(Token(token.getAccessToken, token.getTokenType, token.getExpiresIn.toInt))
   }
 
-  private def toStormPathRequest(request: Request[AnyContent]): HttpRequest = {
+  private def toStormPathRequest[A](request: Request[A]): HttpRequest = {
     val headers = request.headers.toMap.mapValues(v => v.toArray)
     HttpRequests.method(HttpMethod.fromName(request.method))
       .headers(headersWithAuthorization(request))
@@ -69,7 +77,7 @@ class StormpathAuthenticationService extends AuthenticationService {
       .build()
   }
 
-  private def headersWithAuthorization(request: Request[AnyContent]): Map[String, Array[String]] = {
+  private def headersWithAuthorization[A](request: Request[A]): Map[String, Array[String]] = {
     request.getQueryString("api_key") match {
       case Some(key) => (request.headers.toMap ++ Map("Authorization" -> Seq("Bearer " + key))).mapValues(v => v.toArray)
       case None => request.headers.toMap.mapValues(v => v.toArray)
