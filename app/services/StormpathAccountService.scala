@@ -1,7 +1,6 @@
 package services
 
 import java.util
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 import com.fasterxml.uuid.Generators

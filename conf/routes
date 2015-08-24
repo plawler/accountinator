@@ -6,7 +6,7 @@
 GET         /                                    @controllers.Application.index
 
 # OAuth
-POST        /v1/oauth/token                      @controllers.Authentication.token
+GET         /authenticated/test                  @controllers.Authentication.testAuth
 
 # Accounts
 POST        /v1/accounts                         @controllers.Application.create

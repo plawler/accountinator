@@ -16,7 +16,7 @@ class IntegrationSpec extends Specification {
 
     "work from within a browser" in new WithBrowser {
 
-      browser.goTo("http://localhost:" + port + "/chorely/api")
+      browser.goTo("http://localhost:" + port + "/chorely-accounts/api")
 
       browser.pageSource must contain("Your application is ready")
     }
