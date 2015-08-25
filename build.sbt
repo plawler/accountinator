@@ -1,4 +1,4 @@
-name := """chorely-accounts"""
+name := """accountinator"""
 
 version := "1.0-SNAPSHOT"
 
