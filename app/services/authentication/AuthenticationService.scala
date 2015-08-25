@@ -27,9 +27,9 @@ trait AuthenticationService {
 
 class StormpathAuthenticationService extends AuthenticationService {
 
-  val apiKeyId = Play.application.configuration.getString("application.apiKey.id").getOrElse("MISSING API ID")
-  val apiKeySecret = Play.application.configuration.getString("application.apiKey.secret").getOrElse("MISSING API SECRET")
-  val applicationContextPath = Play.application.configuration.getString("stormpath.context").getOrElse("MISSING APPLICATION CONTEXT PATH")
+  val apiKeyId = Play.application.configuration.getString("application.apikey.id").getOrElse("MISSING API ID")
+  val apiKeySecret = Play.application.configuration.getString("application.apikey.secret").getOrElse("MISSING API SECRET")
+  val applicationContextPath = Play.application.configuration.getString("stormpath.application.href").getOrElse("MISSING APPLICATION HREF")
 
   lazy val client: Client = {
 
@@ -41,8 +41,9 @@ class StormpathAuthenticationService extends AuthenticationService {
                         .withDefaultTimeToLive(1, TimeUnit.DAYS)
                         .withDefaultTimeToIdle(2, TimeUnit.HOURS)
                         .withCache(forResource(classOf[Account])
-                        .withTimeToLive(1, TimeUnit.HOURS)
-                        .withTimeToIdle(30, TimeUnit.MINUTES)).build())
+                                    .withTimeToLive(1, TimeUnit.HOURS)
+                                    .withTimeToIdle(30, TimeUnit.MINUTES)
+                                  ).build())
       .build()
   }
 
