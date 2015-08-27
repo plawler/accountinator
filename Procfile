@@ -1,0 +1,1 @@
+web: target/universal/stage/bin/accountinator -Dhttp.port=${PORT} -Dmongodb.uri=${MONGO_URL}
