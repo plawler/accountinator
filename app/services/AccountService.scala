@@ -11,9 +11,9 @@ import scala.util.Try
  */
 @ImplementedBy(classOf[MongoAccountService])
 trait AccountService {
-  def createAccount(account: ChorelyAccount): Future[ChorelyAccount]
-  def findAccount(username: String): Future[Option[ChorelyAccount]]
-  def findAccount(email: String, provider: String): Future[Option[ChorelyAccount]]
-  def updateAccount(account: ChorelyAccount): Future[Boolean]
+  def createAccount(account: Account): Future[Account]
+  def findAccount(username: String): Future[Option[Account]]
+  def findAccount(email: String, provider: String): Future[Option[Account]]
+  def updateAccount(account: Account): Future[Boolean]
 }
 

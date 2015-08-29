@@ -21,7 +21,7 @@ class Application @Inject() (auth: AuthenticationService, accounts: AccountServi
   }
 
   def create = TrustedAction(auth).async(parse.json) { implicit request =>
-    request.body.validate[ChorelyAccount].map { account =>
+    request.body.validate[Account].map { account =>
       accounts.createAccount(account) map { createdAccount =>
         Created(Json.toJson(createdAccount))
       } recover {
@@ -49,7 +49,7 @@ class Application @Inject() (auth: AuthenticationService, accounts: AccountServi
   }
 
   def update = TrustedAction(auth).async(parse.json) { implicit request =>
-    request.body.validate[ChorelyAccount].map { account =>
+    request.body.validate[Account].map { account =>
       accounts.updateAccount(account).map { result =>
         if (result) Ok("Account updated successfully") else Ok("No accounts were updated")
       } recover {

@@ -20,7 +20,7 @@ class MongoAccountService extends AccountService {
 
   def collection: JSONCollection = reactiveMongoApi.db.collection[JSONCollection]("accounts")
 
-  override def createAccount(account: ChorelyAccount): Future[ChorelyAccount] = {
+  override def createAccount(account: Account): Future[Account] = {
     val accountWithId = account.copy(_id = Some(Generators.timeBasedGenerator().generate()))
     for {
       isNoAccount <- findAccount(account.username).map(_.isEmpty)
@@ -31,16 +31,16 @@ class MongoAccountService extends AccountService {
     }
   }
 
-  override def findAccount(username: String): Future[Option[ChorelyAccount]] = {
-    collection.find(Json.obj("username" -> username)).one[ChorelyAccount]
+  override def findAccount(username: String): Future[Option[Account]] = {
+    collection.find(Json.obj("username" -> username)).one[Account]
   }
 
-  override def findAccount(email: String, provider: String): Future[Option[ChorelyAccount]] = {
-    collection.find(Json.obj("email" -> email, "provider" -> provider)).one[ChorelyAccount]
+  override def findAccount(email: String, provider: String): Future[Option[Account]] = {
+    collection.find(Json.obj("email" -> email, "provider" -> provider)).one[Account]
   }
 
   // may want to just implement a saveAccount method for both POST and PUT
-  override def updateAccount(account: ChorelyAccount): Future[Boolean] = {
+  override def updateAccount(account: Account): Future[Boolean] = {
     val selector = BSONDocument("_id" -> account._id.fold("")(_.toString))
     collection.update(selector, account) map (_.ok)
   }

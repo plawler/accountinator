@@ -9,7 +9,7 @@ import com.stormpath.sdk.api.ApiKeys
 import com.stormpath.sdk.application.Application
 import com.stormpath.sdk.cache.Caches._
 import com.stormpath.sdk.client.{Clients, Client}
-import models.ChorelyAccount
+import models.{Account => ChorelyAccount}
 import play.Play
 import play.api.Logger
 
