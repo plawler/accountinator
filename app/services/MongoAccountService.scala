@@ -22,9 +22,10 @@ class MongoAccountService extends AccountService {
 
   override def createAccount(account: ChorelyAccount): Future[ChorelyAccount] = {
     val accountWithId = account.copy(_id = Some(Generators.timeBasedGenerator().generate()))
-    for (
-      result <- collection.insert(accountWithId)
-    ) yield result match {
+    for {
+      isNoAccount <- findAccount(account.username).map(_.isEmpty)
+      result <- collection.insert(accountWithId) if isNoAccount
+    } yield result match {
       case ok if result.ok => accountWithId
       case error => throw new RuntimeException(error.message)
     }

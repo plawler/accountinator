@@ -4,6 +4,7 @@ import com.google.inject.ImplementedBy
 import models._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 /**
  * Created By: paullawler

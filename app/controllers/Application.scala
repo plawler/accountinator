@@ -3,13 +3,15 @@ package controllers
 import com.google.inject.Inject
 import models._
 import play.api.Logger
-import play.api.libs.json.{JsError, Json}
+import play.api.libs.json.Json
 import play.api.mvc._
 import services.authentication.AuthenticationService
 import scala.concurrent.Future
 import play.api.libs.concurrent.Execution.Implicits._
 
 import services._
+
+import scala.util.{Success, Failure}
 
 class Application @Inject() (auth: AuthenticationService, accounts: AccountService)
   extends Controller with ActionBuilders {
@@ -20,13 +22,15 @@ class Application @Inject() (auth: AuthenticationService, accounts: AccountServi
 
   def create = TrustedAction(auth).async(parse.json) { implicit request =>
     request.body.validate[ChorelyAccount].map { account =>
-      accounts.createAccount(account).map { ca =>
-        Created(Json.toJson(ca))
+      accounts.createAccount(account) map { createdAccount =>
+        Created(Json.toJson(createdAccount))
+      } recover {
+        case e: RuntimeException => Conflict("Unable to create the account. Username already taken perhaps?")
       }
     }.getOrElse(Future.successful(BadRequest(Json.obj("message" -> "invalid json"))))
   }
 
-  def getByUsername(username: String) = Action.async {
+  def getByUsername(username: String) = TrustedAction(auth).async { implicit request =>
     accounts.findAccount(username).map {
       case Some(a) => Ok(Json.toJson(a))
       case _ =>
@@ -35,7 +39,7 @@ class Application @Inject() (auth: AuthenticationService, accounts: AccountServi
     }
   }
 
-  def getByEmailAndProvider(email: String, provider: String) = Action.async {
+  def getByEmailAndProvider(email: String, provider: String) = TrustedAction(auth).async {
     accounts.findAccount(email, provider).map {
       case Some(a) => Ok(Json.toJson(a))
       case _ =>
@@ -44,12 +48,12 @@ class Application @Inject() (auth: AuthenticationService, accounts: AccountServi
     }
   }
 
-  def update = Action.async(parse.json) { implicit request =>
+  def update = TrustedAction(auth).async(parse.json) { implicit request =>
     request.body.validate[ChorelyAccount].map { account =>
       accounts.updateAccount(account).map { result =>
         if (result) Ok("Account updated successfully") else Ok("No accounts were updated")
       } recover {
-        case e: RuntimeException => BadRequest(e.getMessage)
+        case e: RuntimeException => Conflict(e.getMessage)
       }
     }.getOrElse(Future.successful(BadRequest(Json.obj("message" -> "invalid json"))))
   }
