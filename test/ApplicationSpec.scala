@@ -9,10 +9,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test._
 import play.api.test.Helpers._
 
-import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
-
 
 /**
  * Add your spec here.
@@ -21,9 +18,6 @@ import scala.concurrent.duration._
  */
 @RunWith(classOf[JUnitRunner])
 class ApplicationSpec extends Specification {
-
-  implicit val wsClient = NingWSClient()
-
 
   "Application" should {
 
@@ -47,29 +41,18 @@ class ApplicationSpec extends Specification {
       val result =
         route(
           FakeRequest(GET, "/accountinator/api/authenticated/test",
-          FakeHeaders(Seq(AUTHORIZATION -> s"Bearer $bearerToken")), AnyContentAsEmpty)
+            FakeHeaders(Seq(AUTHORIZATION -> s"Bearer $bearerToken")), AnyContentAsEmpty)
         ).get
       status(result) must equalTo(OK)
     }
 
-//    "find an account by username"
+    "reject an unauthenticated request" in new WithApplication {
+      val result = route(FakeRequest(GET, "/accountinator/api/authenticated/test",
+        FakeHeaders(Seq(AUTHORIZATION -> s"Bearer IamAbadBearerTokenAndIShouldBeRejected")), AnyContentAsEmpty)).get
 
-  }
+      status(result) mustEqual UNAUTHORIZED
+    }
 
-  trait TokenFixture {
-    val encodedCreds = sys.env("STORMPATH_CREDS_ENCODED")
-
-    val requestHeaders = // just a heads up. play 2.4 uses Seq((String, String))
-      Seq(AUTHORIZATION -> s"Basic $encodedCreds",
-        CONTENT_TYPE -> "application/x-www-form-urlencoded",
-        ACCEPT -> "application/json")
-
-    val tokenatorUri = "https://young-sea-8252.herokuapp.com/tokenator/api/v1/oauth/token/chorely-accounts-api?grant_type=client_credentials"
-
-    val futureResponse = WS.clientUrl(tokenatorUri).withHeaders(requestHeaders: _*).post(AnyContentAsEmpty)
-    val response = Await.result(futureResponse, 30 seconds)
-
-    val bearerToken = (response.json \ "accessToken").as[String]
   }
 
 }
