@@ -1,18 +1,16 @@
 package services
 
+import com.fasterxml.uuid.Generators
 import models._
-
-import scala.concurrent.Future
-import play.api.libs.concurrent.Execution.Implicits._
-
 import play.api.Play
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
+import play.modules.reactivemongo.ReactiveMongoApi
 import play.modules.reactivemongo.json._
 import play.modules.reactivemongo.json.collection._
-import play.modules.reactivemongo.ReactiveMongoApi
-
-import com.fasterxml.uuid.Generators
 import reactivemongo.bson.BSONDocument
+
+import scala.concurrent.Future
 
 class MongoAccountService extends AccountService {
 
