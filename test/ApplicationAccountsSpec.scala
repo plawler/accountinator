@@ -44,7 +44,7 @@ class ApplicationAccountsSpec extends PlaySpec with OneAppPerSuite with MongoEmb
         val collection: JSONCollection = reactiveMongoApi.db.collection[JSONCollection]("accounts")
         val account = Account("tester", "Test", "Tester", "tester@mailinator.com", "test", "test", _id = Some(UUID.randomUUID()))
 
-        val result = Await.result(collection.insert(account), 60 seconds)
+        val result = Await.result(collection.insert(account), 2 minutes)
         result.ok mustBe true
 
         val found = Await.result(collection.find(Json.obj("username" -> "tester")).one[Account], 5 seconds)
